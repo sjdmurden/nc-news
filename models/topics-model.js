@@ -7,3 +7,9 @@ exports.selectTopics = () => {
       return data.rows
    })
 }
+
+exports.selectTopicById = (topic_id) => {
+   return db.query(
+      `SELECT * FROM topics`
+   )
+}

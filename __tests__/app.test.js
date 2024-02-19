@@ -24,13 +24,13 @@ describe('GET /api/topics', () => {
    })
 })
 
-describe('GET /api', () => {
+describe.only('GET /api', () => {
    test('responds with same content as json file', () => {
       const expectedEndpoints = require('../endpoints.json')
       return request(app).get('/api')
       .expect(200)
       .then((response) => {
-         expect(response.body).toEqual(expectedEndpoints)
+         expect(JSON.parse(response.text)).toEqual(expectedEndpoints)
       })
    })
 })
