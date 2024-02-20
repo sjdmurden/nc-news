@@ -40,16 +40,19 @@ describe('GET /api/articles/:article_id', () => {
       return request(app).get('/api/articles/1')
       .expect(200)
       .then((response) => {
-         expect(response.body.article).toMatchObject({
-            author: expect.any(String),
-            title: expect.any(String),
-            article_id: expect.any(Number),
-            body: expect.any(String),
-            topic: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_img_url: expect.any(String)
-         })
+         expect(response.body.article).toEqual(
+            {
+               article_id: 1,
+               title: "Living in the shadow of a great man",
+               topic: "mitch",
+               author: "butter_bridge",
+               body: "I find this existence challenging",
+               created_at: expect.any(String), //this timestamp is correct but the excess decimals made it fail the test
+               votes: 100,
+               article_img_url:
+                 "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            }
+         )
       })
    })
 
@@ -68,4 +71,40 @@ describe('GET /api/articles/:article_id', () => {
          expect(response.body.msg).toBe('Bad request')
       })
    })
+})
+
+describe('GET all articles', () => {
+   test('should return status code 200 and array of article objects with correct properties', () => {
+      return request(app).get('/api/articles')
+      .expect(200)
+      .then((response) => {
+         const {articles} = response.body
+         console.log(response.body);
+         expect(articles.length > 0).toBe(true)
+         articles.forEach((article) => {
+            expect(article).toMatchObject({
+               author: expect.any(String),
+               title: expect.any(String),
+               article_id: expect.any(Number),
+               topic: expect.any(String),
+               created_at: expect.any(String),
+               votes: expect.any(Number),
+               article_img_url: expect.any(String),
+               comment_count: expect.any(String)
+            })
+         })
+      })
+   })
+
+   test('articles sorted by date in descending order (oldest last)', () => {
+      return request(app).get('/api/articles')
+      .expect(200)
+      .then((response) => {
+         const {articles} = response.body
+         console.log(articles);
+         expect(articles).toBeSortedBy('created_at', {descending: true})
+      })
+   })
+
+   
 })
