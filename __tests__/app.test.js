@@ -79,7 +79,6 @@ describe('GET all articles', () => {
       .expect(200)
       .then((response) => {
          const {articles} = response.body
-         console.log(response.body);
          expect(articles.length > 0).toBe(true)
          articles.forEach((article) => {
             expect(article).toMatchObject({
@@ -101,10 +100,39 @@ describe('GET all articles', () => {
       .expect(200)
       .then((response) => {
          const {articles} = response.body
-         console.log(articles);
          expect(articles).toBeSortedBy('created_at', {descending: true})
       })
    })
 
-   
+
+})
+
+xdescribe('GET /api/articles/:article_id/comments', () => {
+   test('responds with an array of comments for a given article_id with the correct properties', () => {
+      return request(app).get('/api/articles/:article_id/comments')
+      .expect(200)
+      .then((response) => {
+         const {comments} = response.body
+         expect(comments.length > 0).toBe(true)
+         comments.forEach((commentObj) => {
+            expect(commentObj).toMatchObject({
+               comment_id: expect.any(Number),
+               votes: expect.any(Number),
+               created_at: expect.any(String),
+               author: expect.any(String),
+               body: expect.any(String),
+               article_id: expect.any(Number)
+            })
+         })
+      })
+   })
+
+   test('comments should be sorted so the most recent comment is first', () => {
+      return request(app).get('/api/articles/:article_id/comments')
+      .expect(200)
+      .then((response) => {
+         const {comments} = response.body
+         expect(comments).toBeSortedBy('created_at', {descending: true})
+      })
+   })
 })
