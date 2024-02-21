@@ -34,3 +34,4 @@ exports.selectAllArticles = (sort_by = 'created_at') => {
       return rows
    })
 }
+

@@ -9,6 +9,7 @@ app.get('/api', describeEndpoints)
 app.get('/api/topics', getTopics)
 app.get('/api/articles/:article_id', getArticleById)
 app.get('/api/articles', getAllArticles)
+app.get('/api/articles/:article_id/comments')
 
 app.use((err, request, response, next) => {
    if(err.status && err.msg){
