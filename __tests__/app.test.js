@@ -107,13 +107,13 @@ describe('GET all articles', () => {
 
 })
 
-xdescribe('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
    test('responds with an array of comments for a given article_id with the correct properties', () => {
-      return request(app).get('/api/articles/:article_id/comments')
+      return request(app).get('/api/articles/3/comments')
       .expect(200)
       .then((response) => {
          const {comments} = response.body
-         expect(comments.length > 0).toBe(true)
+         expect(comments.length === 2).toBe(true)
          comments.forEach((commentObj) => {
             expect(commentObj).toMatchObject({
                comment_id: expect.any(Number),
@@ -128,11 +128,35 @@ xdescribe('GET /api/articles/:article_id/comments', () => {
    })
 
    test('comments should be sorted so the most recent comment is first', () => {
-      return request(app).get('/api/articles/:article_id/comments')
+      return request(app).get('/api/articles/3/comments')
       .expect(200)
       .then((response) => {
          const {comments} = response.body
-         expect(comments).toBeSortedBy('created_at', {descending: true})
+         expect(comments).toBeSortedBy('created_at')
+      })
+   })
+
+   test('responds with empty array when given article_id that exists but has no comments', () => {
+      return request(app).get('/api/articles/2/comments')
+      .expect(200)
+      .then((response) => {
+         expect(response.body.comments).toEqual([])
+      })
+   })
+
+   test('responds with an error if given a valid but non-existent article_id', () => {
+      return request(app).get('/api/articles/999/comments')
+      .expect(404)
+      .then((response) => {
+         expect(response.body.msg).toBe('article does not exist')
+      })
+   })
+
+   test('responds with an error if given an invalid article_id', () => {
+      return request(app).get('/api/articles/rubbish/comments')
+      .expect(400)
+      .then((response) => {
+         expect(response.body.msg).toBe('Bad request')
       })
    })
 })
