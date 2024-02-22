@@ -24,6 +24,7 @@ exports.postComment = async (request, response, next) => {
    try {
       const {username, body} = request.body
       const {article_id} = request.params
+      
       if (isNaN(article_id)) {
          return response.status(400).send({msg: 'Bad request'})
       }

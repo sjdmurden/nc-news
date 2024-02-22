@@ -211,4 +211,18 @@ describe('POST /api/articles/:article_id/comments', () => {
       .send(newComment)
       .expect(404)
    })
+
+   test('status 201: will ignore any unnecessary properties provided on the posted body', () => {
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment',
+         rubbish: 'loadOfRubbish'
+      }
+      return request(app).post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {
+         expect(body.comment.rubbish).toBeUndefined()
+      })
+   })
 })
