@@ -309,3 +309,22 @@ describe('DELETE /api/comments/:comment_id', () => {
 
    })
 })
+
+describe('GET /api/users', () => {
+   test('should return status code 200 and array of users objects with correct properties', () => {
+      return request(app).get('/api/users')
+      .expect(200)
+      .then((response) => {
+         const {users} = response.body
+         console.log(response.body);
+         expect(users.length > 0).toBe(true)
+         users.forEach((user) => {
+            expect(user).toMatchObject({
+               username: expect.any(String),
+               name: expect.any(String),
+               avatar_url: expect.any(String)
+            })
+         })
+      })
+   })
+})
