@@ -160,3 +160,125 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
    })
 })
+
+describe('POST /api/articles/:article_id/comments', () => {
+   test('POST 201: inserts new comment into article', ()=>{
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment'
+      }
+      return request(app).post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {
+         expect(body.comment).toMatchObject({
+            article_id: 3,
+            author: 'rogersop',
+            body: 'this is a new comment',
+            comment_id: 19,
+            created_at: expect.any(String),
+            votes:0
+         })
+      })
+   })
+
+   test('POST 400: should return status 400 for invalid article_id', () => {
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment'
+      }
+      return request(app).post('/api/articles/rubbish/comments')
+      .send(newComment)
+      .expect(400)
+   })
+
+   test('returns status 404 for valid but non-existent article_id', () => {
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment'
+      }
+      return request(app).post('/api/articles/999/comments')
+      .send(newComment)
+      .expect(404)
+   })
+
+   test('returns status 404 for non-existent username', () => {
+      const newComment = {
+         username: "Seb",
+         body: 'this is a new comment'
+      }
+      return request(app).post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(404)
+   })
+
+   test('status 201: will ignore any unnecessary properties provided on the posted body', () => {
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment',
+         rubbish: 'loadOfRubbish'
+      }
+      return request(app).post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {
+         expect(body.comment.rubbish).toBeUndefined()
+      })
+   })
+})
+
+describe('PATCH /api/articles/:article_id', () => {
+   test('updates specific article\'s votes', () => {
+      return request(app).patch('/api/articles/1')
+      .send({inc_votes: 1})
+      .expect(200)
+      .then(({body}) => {
+         expect(body.updatedArticle).toEqual(
+            {
+               article_id: 1,
+               title: "Living in the shadow of a great man",
+               topic: "mitch",
+               author: "butter_bridge",
+               body: "I find this existence challenging",
+               created_at: "2020-07-09T20:11:00.000Z",
+               votes: 101,
+               article_img_url:
+                 "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            }
+         )
+      })
+   })
+
+   test('updates specific article\'s votes with NEGATIVE number', () => {
+      return request(app).patch('/api/articles/1')
+      .send({inc_votes: -10})
+      .expect(200)
+      .then(({body}) => {
+         expect(body.updatedArticle).toEqual(
+            {
+               article_id: 1,
+               title: "Living in the shadow of a great man",
+               topic: "mitch",
+               author: "butter_bridge",
+               body: "I find this existence challenging",
+               created_at: "2020-07-09T20:11:00.000Z",
+               votes: 91,
+               article_img_url:
+                 "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            }
+         )
+      })
+   })
+
+   test('returns status 400 if votes is invalid type', () => {
+      return request(app).patch('/api/articles/1')
+      .send({inc_votes: 'rubbish'})
+      .expect(400)
+   })
+
+   test('returns status 400 if votes num is a float', () => {
+      return request(app).patch('/api/articles/1')
+      .send({inc_votes: 2.5})
+      .expect(400)
+   })
+})
