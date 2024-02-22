@@ -160,3 +160,69 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
    })
 })
+
+describe('POST /api/articles/:article_id/comments', () => {
+   test('POST 201: inserts new comment into article', ()=>{
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment'
+      }
+      return request(app).post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {
+         expect(body.comment).toMatchObject({
+            article_id: 3,
+            author: 'rogersop',
+            body: 'this is a new comment',
+            comment_id: 19,
+            created_at: expect.any(String),
+            votes:0
+         })
+      })
+   })
+
+   test('POST 400: should return status 400 for invalid article_id', () => {
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment'
+      }
+      return request(app).post('/api/articles/rubbish/comments')
+      .send(newComment)
+      .expect(400)
+   })
+
+   test('returns status 404 for valid but non-existent article_id', () => {
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment'
+      }
+      return request(app).post('/api/articles/999/comments')
+      .send(newComment)
+      .expect(404)
+   })
+
+   test('returns status 404 for non-existent username', () => {
+      const newComment = {
+         username: "Seb",
+         body: 'this is a new comment'
+      }
+      return request(app).post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(404)
+   })
+
+   test('status 201: will ignore any unnecessary properties provided on the posted body', () => {
+      const newComment = {
+         username: "rogersop",
+         body: 'this is a new comment',
+         rubbish: 'loadOfRubbish'
+      }
+      return request(app).post('/api/articles/3/comments')
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {
+         expect(body.comment.rubbish).toBeUndefined()
+      })
+   })
+})
