@@ -282,3 +282,30 @@ describe('PATCH /api/articles/:article_id', () => {
       .expect(400)
    })
 })
+
+describe('DELETE /api/comments/:comment_id', () => {
+   test('status 204: responds with no content', () => {
+      return request(app).delete('/api/comments/1')
+      .expect(204)
+      .then((response) => {
+         expect(response.body).toEqual({})
+      })
+   })
+
+   test('returns status 404 if comment id doesn\'t exist', () => {
+      return request(app).delete('/api/comments/9999')
+      .expect(404)
+      .then((response) => {
+         expect(response.body.msg).toEqual('Comment not found')
+      })
+   })
+
+   test('returns status 400 if comment id is invalid', () => {
+      return request(app).delete('/api/comments/rubbish')
+      .expect(400)
+      .then((response) => {
+         expect(response.body.msg).toEqual('Bad request')
+      })
+
+   })
+})
