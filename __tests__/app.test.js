@@ -354,4 +354,9 @@ describe('GET /api/articles (topic query)', () => {
       return request(app).get('/api/articles?topic=rubbish')
       .expect(404)
    })
+
+   test('status 200: valid topic with no articles', () => {
+      return request(app).get('/api/articles?topic=paper')
+      .expect(200)
+   })
 })
