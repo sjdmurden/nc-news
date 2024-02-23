@@ -1,5 +1,5 @@
 const { response } = require('../app');
-const { selectAllUsers } = require('../models/users-model');
+const { selectAllUsers, selectUserByUsername } = require('../models/users-model');
 
 exports.getAllUsers = (request, response, next) => {
    selectAllUsers()
@@ -8,6 +8,18 @@ exports.getAllUsers = (request, response, next) => {
    })
    .catch((err) => {
       console.log(err);
+      next(err)
+   })
+}
+
+exports.getUserByUsername = (request, response, next) => {
+   const {username} = request.params
+   console.log(username);
+   selectUserByUsername(username)
+   .then((user) => {
+      response.status(200).send( {user});
+   })
+   .catch((err) => {
       next(err)
    })
 }

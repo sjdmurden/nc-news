@@ -387,3 +387,25 @@ describe('GET /api/articles/:article_id (comment_count)', () => {
       })
    })
 })
+
+describe('GET /api/users/:username', () => {
+   test('status 200 and returns user by username', () => {
+      return request(app).get('/api/users/rogersop')
+      .expect(200)
+      .then((response) => {
+         console.log(response.body);
+         expect(response.body.user).toEqual(
+            {
+               username: 'rogersop',
+               name: 'paul',
+               avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+            }
+         )
+      })
+   })
+
+   test('status 404 if user is non-existent', () => {
+      return request(app).get('/api/users/rubbish')
+      .expect(404)
+   })
+})

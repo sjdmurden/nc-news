@@ -6,16 +6,17 @@ const { getArticleById, getAllArticles } = require('./controllers/articles-contr
 const { getCommentsById, postComment } = require('./controllers/comments-controller')
 const { updateVotes } = require('./controllers/updateVotes-controller')
 const { deleteComment } = require('./controllers/deleteComment-controller')
-const { getAllUsers } = require('./controllers/users-controller')
+const { getAllUsers, getUserByUsername } = require('./controllers/users-controller')
 
 app.use(express.json())
 
 app.get('/api', describeEndpoints)
 app.get('/api/topics', getTopics)
-app.get('/api/articles/:article_id', getArticleById)
 app.get('/api/articles', getAllArticles)
+app.get('/api/articles/:article_id', getArticleById)
 app.get('/api/articles/:article_id/comments', getCommentsById)
 app.get('/api/users', getAllUsers)
+app.get('/api/users/:username', getUserByUsername)
 
 app.post('/api/articles/:article_id/comments', postComment)
 
