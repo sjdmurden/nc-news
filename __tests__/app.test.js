@@ -316,7 +316,6 @@ describe('GET /api/users', () => {
       .expect(200)
       .then((response) => {
          const {users} = response.body
-         console.log(response.body);
          expect(users.length > 0).toBe(true)
          users.forEach((user) => {
             expect(user).toMatchObject({
@@ -326,5 +325,38 @@ describe('GET /api/users', () => {
             })
          })
       })
+   })
+})
+
+describe('GET /api/articles (topic query)', () => {
+   test('returns status 200 and array of article objects with correct properties with specific topic', () => {
+      return request(app).get('/api/articles?topic=mitch')
+      .expect(200)
+      .then((response) => {
+         const {articles} = response.body
+         expect(articles.length > 0).toBe(true)
+         articles.forEach((article) => {
+            expect(article).toMatchObject({
+               author: expect.any(String),
+               title: expect.any(String),
+               article_id: expect.any(Number),
+               topic: 'mitch',
+               created_at: expect.any(String),
+               votes: expect.any(Number),
+               article_img_url: expect.any(String),
+               comment_count: expect.any(String)
+            })
+         })
+      })
+   })
+
+   test('status 404 if topic doesn\'t exist', () => {
+      return request(app).get('/api/articles?topic=rubbish')
+      .expect(404)
+   })
+
+   test('status 200: valid topic with no articles', () => {
+      return request(app).get('/api/articles?topic=paper')
+      .expect(200)
    })
 })
