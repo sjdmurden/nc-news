@@ -8,7 +8,6 @@ exports.deleteCommentFromDB = (comment_id) => {
          comment_id = $1`,
       [comment_id]
    ).then((result) => {
-      console.log(result);
       return result.rowCount > 0
    });
 }

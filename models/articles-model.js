@@ -14,8 +14,8 @@ exports.selectArticleById = (article_id) => {
    })
 }
 
-exports.selectAllArticles = (sort_by = 'created_at') => {
-   const queryString = `
+exports.selectAllArticles = (sort_by = 'created_at', topic = null) => {
+   let queryString = `
    SELECT 
       articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count
    FROM 
@@ -23,15 +23,24 @@ exports.selectAllArticles = (sort_by = 'created_at') => {
    JOIN 
       comments
    ON 
-      articles.article_id = comments.article_id
+      articles.article_id = comments.article_id`;
+
+   if (topic) {
+      queryString += `
+      WHERE 
+         articles.topic = '${topic}'`;
+   }
+
+   queryString += `
    GROUP BY 
       articles.article_id
    ORDER BY 
-      ${sort_by} DESC;`
+      ${sort_by} DESC;`;
 
    return db.query(queryString)
    .then(({rows}) => {
       return rows
    })
 }
+
 
