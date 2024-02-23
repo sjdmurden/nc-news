@@ -14,7 +14,6 @@ exports.getAllUsers = (request, response, next) => {
 
 exports.getUserByUsername = (request, response, next) => {
    const {username} = request.params
-   console.log(username);
    selectUserByUsername(username)
    .then((user) => {
       response.status(200).send( {user});

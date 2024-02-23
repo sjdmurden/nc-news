@@ -393,7 +393,6 @@ describe('GET /api/users/:username', () => {
       return request(app).get('/api/users/rogersop')
       .expect(200)
       .then((response) => {
-         console.log(response.body);
          expect(response.body.user).toEqual(
             {
                username: 'rogersop',
