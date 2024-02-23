@@ -47,6 +47,7 @@ describe('GET /api/articles/:article_id', () => {
                topic: "mitch",
                author: "butter_bridge",
                body: "I find this existence challenging",
+               comment_count: expect.any(String),
                created_at: expect.any(String), //this timestamp is correct but the excess decimals made it fail the test
                votes: 100,
                article_img_url:
@@ -60,7 +61,7 @@ describe('GET /api/articles/:article_id', () => {
       return request(app).get('/api/articles/9999')
       .expect(404)
       .then((response) => {
-         expect(response.body.msg).toBe('article does not exist');
+         expect(response.body.msg).toBe('Article does not exist');
       });
    })
 
@@ -148,7 +149,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       return request(app).get('/api/articles/999/comments')
       .expect(404)
       .then((response) => {
-         expect(response.body.msg).toBe('article does not exist')
+         expect(response.body.msg).toBe('Article does not exist')
       })
    })
 
@@ -358,5 +359,31 @@ describe('GET /api/articles (topic query)', () => {
    test('status 200: valid topic with no articles', () => {
       return request(app).get('/api/articles?topic=paper')
       .expect(200)
+   })
+})
+
+describe('GET /api/articles/:article_id (comment_count)', () => {
+   test('article response object should also now include comment_count', () => {
+      return request(app).get('/api/articles/5')
+      .expect(200)
+      .then((response) => {
+         const {article} = response.body
+         expect(article.comment_count).toBe('2')
+      })
+   })
+
+   test('responds with status 404 and error message when given a valid but non-existent id', () => {
+      return request(app).get('/api/articles/9999')
+      .expect(404)
+      .then((response) => {
+         expect(response.body.msg).toBe('Article does not exist');
+      });
+   })
+   test('responds with status 400 and error message when given invalid id', () => {
+      return request(app).get('/api/articles/rubbish')
+      .expect(400)
+      .then((response) => {
+         expect(response.body.msg).toBe('Bad request')
+      })
    })
 })
