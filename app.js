@@ -1,3 +1,6 @@
+const cors = require('cors');
+app.use(cors());
+
 const express = require('express')
 const app = express()
 const { getTopics } = require('./controllers/topics-controller')
