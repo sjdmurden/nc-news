@@ -1,8 +1,8 @@
-const cors = require('cors');
-app.use(cors());
 
 const express = require('express')
 const app = express()
+const cors = require('cors');
+app.use(cors());
 const { getTopics } = require('./controllers/topics-controller')
 const { describeEndpoints } = require('./controllers/api-controller')
 const { getArticleById, getAllArticles } = require('./controllers/articles-controller')
