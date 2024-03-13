@@ -43,7 +43,7 @@ exports.selectAllArticles = (sort_by = 'created_at', order_by = "DESC", topic = 
    GROUP BY 
       articles.article_id
    ORDER BY 
-      ${sort_by} ${order_by};`;
+      ${sort_by} DESC;`;
 
    return db.query(queryString)
    .then(({rows}) => {
