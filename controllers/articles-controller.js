@@ -19,6 +19,8 @@ exports.getArticleById = (request, response, next) => {
 exports.getAllArticles = async(request, response, next) => {
    try{
       const {topic} = request.query
+      let {sort_by} = request.query
+      let {order_by} = request.query
       const topics = await selectTopics()
       const topicsArray = topics.map(element => element.slug)
 
@@ -31,7 +33,7 @@ exports.getAllArticles = async(request, response, next) => {
          response.status(404).send({articles})
       }
 
-      const articles = await selectAllArticles('created_at', topic)
+      const articles = await selectAllArticles(sort_by, order_by, topic)
       
       response.status(200).send({articles})
    }
