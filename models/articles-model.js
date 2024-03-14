@@ -22,7 +22,7 @@ exports.selectArticleById = (article_id) => {
    })
 }
 
-exports.selectAllArticles = (sort_by = 'created_at', topic = null) => {
+exports.selectAllArticles = (sort_by = 'created_at', order_by = 'DESC', topic = null) => {
    let queryString = `
    SELECT 
       articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count
@@ -43,7 +43,7 @@ exports.selectAllArticles = (sort_by = 'created_at', topic = null) => {
    GROUP BY 
       articles.article_id
    ORDER BY 
-      ${sort_by} DESC;`;
+      ${sort_by} ${order_by}`;
 
    return db.query(queryString)
    .then(({rows}) => {
