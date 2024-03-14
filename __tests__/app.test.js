@@ -105,6 +105,33 @@ describe('GET all articles', () => {
       })
    })
 
+    test('articles sorted by date in descending order (most comms first)', () => {
+      return request(app).get('/api/articles?order_by=DESC')
+      .expect(200)
+      .then((response) => {
+         const {articles} = response.body
+         expect(articles).toBeSortedBy('created_at', {descending: true})
+      })
+   })
+
+   test('articles sorted by comment_count in ascending order (least comms first)', () => {
+      return request(app).get('/api/articles?sort_by=comment_count&order_by=ASC')
+      .expect(200)
+      .then((response) => {
+         const {articles} = response.body
+         expect(articles).toBeSortedBy('comment_count', {coerce: true})
+      })
+   })
+
+   test('articles sorted by num of votes in ascending order (least votes first)', () => {
+      return request(app).get('/api/articles?sort_by=votes&order_by=ASC')
+      .expect(200)
+      .then((response) => {
+         const {articles} = response.body
+         expect(articles).toBeSortedBy('votes', {descending: false})
+      })
+   })
+
 
 })
 
@@ -359,6 +386,26 @@ describe('GET /api/articles (topic query)', () => {
    test('status 200: valid topic with no articles', () => {
       return request(app).get('/api/articles?topic=paper')
       .expect(200)
+   })
+
+   test('topics sorted by date in descending order (most comms first)', () => {
+      return request(app).get('/api/articles?topic=mitch&order_by=DESC')
+      .expect(200)
+      .then((response) => {
+         const {articles} = response.body
+         console.log(articles);
+         expect(articles).toBeSortedBy('created_at', {descending: true})
+      })
+   })
+
+   test('topics sorted by votes in ascending order (least votes first)', () => {
+      return request(app).get('/api/articles?topic=mitch&sort_by=votes&order_by=ASC')
+      .expect(200)
+      .then((response) => {
+         const {articles} = response.body
+         console.log(articles);
+         expect(articles).toBeSortedBy('votes', {descending: false})
+      })
    })
 })
 
