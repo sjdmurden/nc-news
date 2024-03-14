@@ -18,14 +18,12 @@ exports.getArticleById = (request, response, next) => {
 
 exports.getAllArticles = async(request, response, next) => {
    try{
-      const {topic} = request.query
-      let {sort_by} = request.query
-      let {order_by} = request.query
+      const {topic, sort_by, order_by} = request.query
       const topics = await selectTopics()
       const topicsArray = topics.map(element => element.slug)
 
       if(!topic){
-         const articles = await selectAllArticles()
+         const articles = await selectAllArticles(sort_by, order_by)
          response.status(200).send({articles})
       }
 
@@ -34,6 +32,10 @@ exports.getAllArticles = async(request, response, next) => {
       }
 
       const articles = await selectAllArticles(sort_by, order_by, topic)
+
+      articles.forEach(article => {
+         article.comment_count = parseInt(article.comment_count);
+      });
       
       response.status(200).send({articles})
    }
